@@ -4,4 +4,5 @@ bin/
 .settings
 .DS_Store
 /target
-
+src/main/resources/serviceinfo.txt
+.factorypath

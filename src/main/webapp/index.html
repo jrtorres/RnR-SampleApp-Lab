@@ -10,143 +10,103 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-   <header class="_demo--heading">
-	<div class="_demo--container">
-		<a class="wordmark" href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/">
-			<span class="wordmark--left">IBM</span>
-			<span class="wordmark--right">Watson Developer Cloud</span>
-		</a>
-		<nav class="heading-nav" role="menubar">
-		  <ul>
-			<li class="base--li heading-nav--li" role="presentation">
-				<a class="heading-nav--item" href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/services-catalog.html" role="menuitem">
-					Services
-				</a>
-			</li>
-			<li class="base--li heading-nav--li" role="presentation">
-				<a class="heading-nav--item" href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/" role="menuitem">
-					Docs
-				</a>
-			</li>
-			<li class="base--li heading-nav--li" role="presentation">
-				<a class="heading-nav--item" href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/gallery.html" role="menuitem">
-					App Gallery
-				</a>
-			</li>
-			<li class="base--li heading-nav--li" role="presentation">
-				<a class="heading-nav--item" href="https://developer.ibm.com/watson/" role="menuitem">
-					Community
-				</a>
-			</li>
-			</ul>
-		</nav>
-	</div>
-</header>
-  <div class="_demo--banner">
-	<div class="_demo--container">
-		<div class="banner--service-icon-container">
-			<img class="banner--service-icon" src="images/retrieve-and-rank.svg" alt="Retrieve and Rank API Icon">
-		</div>
-		<div class="banner--service-info">
-			<h1 class="banner--service-title base--h1">
-				<img class="banner--service-icon_INLINE" src="images/retrieve-and-rank.svg" alt="Retrieve and Rank API Icon">
-				Retrieve and Rank
-			</h1>
-			<div class="banner--service-description">
-			The IBM Watson Retrieve and Rank service helps users find the most relevant information for their query by using a combination of search and machine learning to find “signals” in the data.
+	<div class="_demo--banner">
+		<div class="_demo--container">
+			<div class="banner--service-icon-container">
+				<img class="banner--service-icon" src="images/retrieve-and-rank.svg"
+					alt="Retrieve and Rank API Icon">
 			</div>
-			<div class="banner--service-resource">
-				<span class="icon icon-link"></span>
-				<strong>Resources:</strong>
-			</div>
-			<div class="banner--service-links">
-				<ul>
-				<li class="base--li banner--service-link-item">
-					<a href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/retrieve-and-rank/api/v1/" class="base--a" target="_blank">API Overview</a>
-				</li>
-				<li class="base--li banner--service-link-item">
-					<a href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/retrieve-and-rank/" class="base--a" target="_blank">Documentation</a>
-				</li>
-        		<li class="base--li banner--service-link-item" target="_blank">
-					<a href="https://github.com/watson-developer-cloud/retrieve-and-rank-java" class="base--a" target="_blank">Fork on Github</a>
-				</li>
-				<li class="base--li banner--service-link-item" target="_blank">
-					<a href="https://bluemix.net/deploy?repository=https://github.com/watson-developer-cloud/retrieve-and-rank-java" class="base--a" target="_blank">Fork and Deploy on Bluemix</a>
-				</li>
-				</ul>
+			<div class="banner--service-info">
+				<h1 class="banner--service-title base--h1">
+					<img class="banner--service-icon_INLINE"
+						src="images/retrieve-and-rank.svg"
+						alt="Retrieve and Rank API Icon"> Retrieve and Rank
+				</h1>
+				<div class="banner--service-description">The IBM Watson
+					Retrieve and Rank service helps users find the most relevant
+					information for their query by using a combination of search and
+					machine learning to find “signals” in the data.</div>
 			</div>
 		</div>
 	</div>
-</div>
-
-  <div class="_demo--container">
-	<article class="_content base--article">
-		<div class="_content--choose-input-file">
-			<h2 id="top" class="base--h2">Compare machine learning approach and standard search</h2>
-			<p class="_content--input-description base--p">
-				This service was trained on part of the <a class="base--a" href="http://ir.dcs.gla.ac.uk/resources/test_collections/cran/">Cranfield Collection</a> data. The collection contains questions paired with answers about aerodynamics.
-			</p>
+	<div class="_demo--container">
+		<article class="_content base--article">
+			<div class="_content--choose-input-file">
+				<h2 id="top" class="base--h2">Machine Learning vs Standard Search</h2>
+				<p class="_content--input-description base--p">
+					This service was trained on a subset of medical content from NIDDK
+				</p>
+			</div>
+			<h3 class="base--h3">Input</h3>
+			<div class="input">
+				<table style="width:100%">
+  					<tr>
+						<td>
+							<div class="input--question-user-entered base--a"
+					style="cursor: pointer;">Enter your own question</div></td>
+						<td><div class="input--question-generator base--a"
+					style="cursor: pointer;">Get a random question</div></td> 
+  					</tr>
+				</table>
+				<div class="input--container-generated">
+					<p id="query" class="input--question base--p"></p>
+				</div>
+				<div class="input--container-user">
+					<input id="questionText" type="text" value="Enter a question" style="width: 70%;"/>
+					<button id="questionSearchButton" type="button" name="">Ask Question</button>
+				</div>
+			</div>
+			<div class="error" style="display: none;'">
+				<div class="_demo--container">
+					<h3 class="base--h3">Output</h3>
+					<h4></h4>
+				</div>
+			</div>
+		</article>
+	</div>
+	<div class="output">
+		<div class="_demo--container">
+			<h3 class="base--h3">Output</h3>
+			<p class="base--p">You can compare the machine learning approach
+				(Retrieve and Rank) and the standard search results (Solr).</p>
+			<div class="toggle">
+				<div class="toggle--item active">Machine learning approach</div>
+			</div>
+			<div class="service--results"></div>
+			<div class="toggle">
+				<div class="toggle--item active">Standard search</div>
+			</div>
+			<div class="standard--results"></div>
 		</div>
-		<h3 class="base--h3">Input</h3>
-		<div class="input">
-			<div class="input--question-generator base--a" style="cursor: pointer;">
-        Get a random question about aerodynamics
-      </div>
-      <div class="input--container">
-        <p id="query" class="input--question base--p"></p>
-      </div>
+	</div>
+	<div class="results--item result--template" style="display: none;">
+		<div class="results--item-container">
+			<div class="results--item-rank">
+				<span class="results--increase-icon icon"></span> <span
+					class="results--increase-value "></span>
+			</div>
+			<div class="results--basic-info">
+				<div class="results--item-text">
+					<span class="icon icon-see_more results--see-more"></span>
+				</div>
+				<div class="results--item-score">
+					<div class="results--item-score-title">Domain expert review</div>
+					<div class="results--item-score-value">
+						<div class="results--item-score-bar"></div>
+						<div class="results--item-score-bar"></div>
+						<div class="results--item-score-bar"></div>
+						<div class="results--item-score-bar"></div>
+					</div>
+				</div>
+			</div>
+			<div class="results--more-info" style="display: none;">
+				<blockquote class="results--item-details base--blockquote">
+				</blockquote>
+			</div>
 		</div>
-    <div class="error" style="display:none;'">
-    	<div class="_demo--container">
-      		<h3 class="base--h3">Output</h3>
-      	<h4></h4>
-      	</div>
-    </div>
-  </article>
-  </div>
-<div class="output">
-    <div class="_demo--container">
-      <h3 class="base--h3">Output</h3>
-		<p class="base--p">
-			You can compare the machine learning approach (Retrieve and Rank) and the standard search results (Solr).
-		</p>
-    <div class="toggle">
-			<div class="toggle--item active">Machine learning approach</div>
-		</div>
-		<div class="service--results"></div>
-    <div class="toggle">
-			<div class="toggle--item active">Standard search</div>
-		</div>
-		<div class="standard--results"></div>
-  </div>
-</div>
-<div class="results--item result--template" style="display:none;">
-  <div class="results--item-container">
-    <div class="results--item-rank">
-      <span class="results--increase-icon icon" ></span>
-      <span class="results--increase-value "></span>
-    </div>
-    <div class="results--basic-info">
-      <div class="results--item-text">
-        <span class="icon icon-see_more results--see-more"></span>
-      </div>
-      <div class="results--item-score">
-        <div class="results--item-score-title"> Domain expert review</div>
-          <div class="results--item-score-value">
-            <div class="results--item-score-bar"></div>
-            <div class="results--item-score-bar"></div>
-            <div class="results--item-score-bar"></div>
-            <div class="results--item-score-bar"></div>
-          </div>
-      </div>
-    </div>
-    <div class="results--more-info" style="display: none;">
-      <blockquote class="results--item-details base--blockquote">
-      </blockquote>
-    </div>
-  </div>
-</div>
-   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-   <script type="text/javascript" src="js/demo.js"></script>
+	</div>
+	<script type="text/javascript"
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script type="text/javascript" src="js/demo.js"></script>
 </body>
 </html>

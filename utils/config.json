@@ -1,0 +1,6 @@
+{
+    "conversion_target": "ANSWER_UNITS",
+    "answer_units": {
+        "selector_tags": ["h1","h2"]
+    }
+}

@@ -75,8 +75,10 @@ public class RetrieveAndRankResource {
     String password = "PASSWORD";   
     String endPoint = "https://gateway.watsonplatform.net/retrieve-and-rank/api";
 
+    
     // Get username and password from the VCAP_SERVICES environment variable in Bluemix
     String apiKey = CredentialUtils.getAPIKey(RETRIEVE_AND_RANK);
+        
     if (apiKey != null) {
       // credentials = username:password
       String[] credentials = new String(Base64.decodeBase64(apiKey.replaceAll(BASIC,""))).split(":");
@@ -84,10 +86,11 @@ public class RetrieveAndRankResource {
       password = credentials[1];
     }
     
+    
     // Service instance
     this.service = new RetrieveAndRank();
     service.setUsernameAndPassword(username, password);
-
+    
     // Ground truth
     InputStreamReader reader =
         new InputStreamReader(getClass().getResourceAsStream("/groundtruth.json"));
@@ -143,11 +146,10 @@ public class RetrieveAndRankResource {
 
       SolrResults rankedResults = solrUtils.search(body, true);
       queryResponse.setRankedResults(rankedResults.getResult());
-
+      
       SolrResults solrResults = solrUtils.search(body, false);
       queryResponse.setSolrResults(solrResults.getResult());
       queryResponse.setNumSolrResults(solrResults.getNumberOfResults());
-
 
 
       // 1. Collects all the documents ids to retrieve the title and body in a single query
@@ -161,7 +163,7 @@ public class RetrieveAndRankResource {
         idsOfDocsToRetrieve.add(answer.getAnswerId());
         answer.setFinalRank(rankedResults.getIds().indexOf(answer.getAnswerId()));
       }
-
+      
       // 2. Query Solr to retrieve document title and body
       Map<String, SolrResult> idsToDocs = solrUtils.getDocumentsByIds(idsOfDocsToRetrieve);
 

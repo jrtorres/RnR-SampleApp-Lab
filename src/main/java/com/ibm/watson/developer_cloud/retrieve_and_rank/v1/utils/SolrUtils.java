@@ -47,7 +47,7 @@ public class SolrUtils {
 
   private static final String TITLE = "title";
   private static final String ID = "id";
-  private static final String BODY = "body";
+  private static final String BODY = "text";//"body";
   private static String FCSELECT_REQUEST_HANDLER = "/fcselect";
   private static String FEATURE_VECTOR_FIELD = "featureVector";
   private static String FIELD_LIST_PARAM = "fl";
@@ -72,7 +72,7 @@ public class SolrUtils {
     this.rankerId = rankerID;
     this.collectionName = collectionName;
     this.solrClient = solrClient;
-    this.groundTruth = groundTruth;
+    this.groundTruth = groundTruth;    
   }
 
   /**
@@ -89,8 +89,8 @@ public class SolrUtils {
     int currentAttempt = 0;
     QueryResponse response;
     while (true) {
-      try {
-        currentAttempt++;
+      try {    	  
+    	currentAttempt++;
         response = request.process(solrClient, collectionName);
         break;
       } catch (Exception e) {
@@ -116,6 +116,7 @@ public class SolrUtils {
     try {
       logger.info("Searching for document...");
       QueryResponse queryResponse = solrRuntimeQuery(query.getQuery(), useRanker);
+      
       logger.info("Found " + queryResponse.getResults().size() + " documents!");
 
       List<RankResult> answerList = new ArrayList<>();
@@ -127,7 +128,7 @@ public class SolrUtils {
         SolrDocument doc = it.next();
         ids.add((String) doc.getFieldValue(ID_FIELD));
         String score = String.valueOf(doc.getFieldValue(SCORE_FIELD));
-        if (i++ < 3) {
+        if (i++ < 10) {
 
           RankResult a = new RankResult();
           a.setAnswerId((String) doc.getFieldValue(ID_FIELD));
@@ -187,9 +188,9 @@ public class SolrUtils {
     featureSolrQuery.setParam(FIELD_LIST_PARAM, ID_FIELD, SCORE_FIELD, FEATURE_VECTOR_FIELD);
 
     // need to ask for enough rows to ensure the correct answer is included in the resultset
-    featureSolrQuery.setRows(1000);
+    featureSolrQuery.setRows(1000);    
     QueryRequest featureRequest = new QueryRequest(featureSolrQuery, METHOD.POST);
-
+    
     return processSolrRequest(featureRequest);
   }
 
