@@ -1,15 +1,5 @@
-# Retrieve and Rank
-[![Build Status](https://travis-ci.org/watson-developer-cloud/retrieve-and-rank-java.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/retrieve-and-rank-java)
-
+# Retrieve and Rank Demo
 The IBM Watson [Retrieve and Rank][service_url] service helps users find the most relevant information for their queries by using a combination of search and machine learning algorithms to detect "signals" in the data. You load your data into the service, which is built on top of Apache Solr, and train a machine learning model. Then use the trained model to provide improved results to users.
-
-Give it a try! Click the button below to fork into IBM DevOps Services and deploy your own copy of this application on Bluemix.  
-[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watson-developer-cloud/retrieve-and-rank-java)
-
-View a [demo](http://retrieve-and-rank-demo.mybluemix.net/) of this app.
-
-## How it works
-This application uses publicly available test data called the [Cranfield collection](http://ir.dcs.gla.ac.uk/resources/test_collections/cran/). The collection contains abstracts of aerodynamics journal articles, a set of questions about aerodynamics, and labels to mark how relevant an article is to a question. Some questions are not used as training data, which means that you can use them to validate the performance of the trained ranker. This subset of questions are are used in the demo.
 
 ## Before you begin
 Ensure that you have the following prerequisites before you start:
@@ -22,151 +12,153 @@ Ensure that you have the following prerequisites before you start:
 * [Websphere Liberty Profile server](https://developer.ibm.com/wasdev/downloads/liberty-profile-using-non-eclipse-environments/), if you want to run the app in your local environment
 
 
-## Getting Started
+## Set up Retrieve and Rank
 
-1. Create a Bluemix Account
+### Provision A Retrieve and Rank Service
 
-   [Sign up][sign_up] in Bluemix or use an existing account. Watson Services
-   in Beta are free to use.
+1. You need a Bluemix account. If you don't have one, [sign up][sign_up].
 
-2. Download and install the [Cloud-foundry CLI][cloud_foundry] tool.
+1. Download and install the [Cloud-foundry CLI][cloud_foundry] tool if you haven't already.
 
-3. Edit the `manifest.yml` file and change the `<application-name>` to something unique.
+1. Provision an R&R service by going through the Bluemix catalog. Or using the CF command line tools.
 
-  ```none
-  applications:
-  - services:
-    - retrieve-and-rank-service
-    name: <application-name>
-    path: webApp.war
-    memory: 512M
-  ```
+	1. [CF Option] Connect to Bluemix with the command line tool.
+  		```sh
+  		$ cf api https://api.ng.bluemix.net
+  		$ cf login -u <your user ID>
+  		```
 
-  The name you use determines your initial application URL, e.g.,
-  `<application-name>.mybluemix.net`.
+	1. [CF Option] Create the Retrieve and Rank service.
+  		```sh
+  		$ cf create-service retrieve_and_rank standard retrieve-and-rank-ws1
+  		```
 
-4. Connect to Bluemix in the command line tool.
+### Configure the Retrieve and Rank Service
 
-  ```sh
-  $ cf api https://api.ng.bluemix.net
-  $ cf login -u <your-user-ID>
-  ```
+1. Gather the credentials for the provisioned R&R service through the service dashboard in bluemix or the following CF commands:
+	
+	1. Get Service name:
+		```sh
+		$ cf services
+		```
+  		
+	1. Copy the service name to get the Service Keys:
+		```sh
+		$ cf service-keys "{SERVICE_NAME}"
+		```
+  		
+	1. Copy the service key name to get credentials:
+		```sh
+  		$ cf service-key "{SERVICE_NAME}" "{SERVICE_KEY_NAME}"
+  		```
 
-5. Create the Retrieve and Rank service in Bluemix.
+	1. Copy the username and password.
 
-  ```sh
-  $ cf create-service retrieve_and_rank standard retrieve-and-rank-service
-  ```
+1. Create the Solr cluster using the following curl command
+	```sh
+	curl -H “Content-Type: application/json” -X POST -u "{credentials_username}":"{credentials_password}" -d “{\”cluster_size\”:\”1\”,\”cluster_name\”:\”ws_niddk_cluster\”}” “https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters"
+	```
 
-6. Download and install the [maven][maven] compiler.
+1. Take note of the `<solr_cluster_id>`.
+  
+1. Wait until the cluster becomes available. Use the following command to check status:
+	```sh
+	curl -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters/{solr_cluster_id}"
+  	```
 
-7. Build the project.
+### Index documents
 
-   You need to use the Apache `maven` to build the war file.
+1. Inspect the corpus document json file and the sample configuration schema file
 
-  ```sh
-  $ maven install
-  ```
+1. Add the appropriate fields to the schema.xml file:
 
-8. Push it live!
+	1. Add the fields id, source, doc_type, topic, text_description. Make sure they are of type watson_text_en.
+	
+	1. Add a copy field called text to aggregate key fields.
+	
+1. Zip the configuration files.
 
-  ```sh
-  $ cf push -p target/webApp.war
-  ```
+1. Add the new configuration to the cluster using the following curl command:
+	```sh
+	curl -X POST -H "Content-Type: application/zip" -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters/{solr_cluster_id}/config/{name_of_config}" --data-binary @/{name_of_zip_file}.zip
+	```
+	
+1. Create the collection
+	```sh
+	curl -X POST -H "Content-Type: application/zip" -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters/{solr_cluster_id}/solr/admin/collections" -d "action=CREATE&name=ws_niddk_collection&collection.configName={name_of_config}&wt=json"
+	```
 
-9. Train the service to use the Cranfield collection and train a ranker with the Cranfield data. See a tutorial in <a href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/retrieve-rank/get_start.shtml" target="_blank"> Getting started with the Retrieve and Rank service</a>. As you complete the tutorial, save this information:
-  * Solr cluster ID: The unique identifier of the Apache Solr Cluster that you create.
-  * Collection name: The name you give to the Solr collection when you create it.  
-  * Ranker ID: The unique identifier of the ranker you create.
+1. Gather the documents already prepared in the solrdocs.json file (in corpus directory)
 
+1. Index them in the collection:
+	```sh
+	curl -X POST -H "Content-Type: application/json" -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters/{solr_cluster_id}/solr/{name_of_collection}/update?commit=true" --data-binary @/{name_of_solrdocs_file}.json
+	```
 
-10. Use the values from the tutorial to specify environment variables in your app.  
+1. Validate the collection has documents by:
+	1. checking the number of indexed documents with the following command:
+		```sh
+		curl -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters/{solr_cluster_id}/solr/{name_of_collection}/select?q=*:*&rows=0&wt=json"
+		```
+	
+		1. numFound should be 1040
+	
+	1. Check that Solr responds to questions:
+		```sh
+		curl -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters/{solr_cluster_id}/solr/{name_of_collection}/select?q=What%20are%20the%20symptoms%20of%20Appendicitis&wt=json&fl=id,topic,text_description"
+		```
 
-  1. Navigate to the application dashboard in Bluemix.
-  2. Click the Retrieve and Rank application you created earlier.
-  3. Click **Environment Variables**.
-  4. Click **USER-DEFINED**.
-  5. Add the following three environment variables with the values that you copied from the tutorial:
-      * `CLUSTER_ID`
-      * `COLLECTION_NAME`
-      * `RANKER_ID`
+### Create the Ranker
 
-## Running locally
+1. Inspect the ground truth relevance file (training/gt_train.csv)
 
-  The application uses the WebSphere Liberty profile runtime as its server,
-  so you need to download and install the profile as part of the steps below.
+1. Using the training python file, generate the training data file and train the ranker. Supplying the desired ranker name
+	```sh
+	python train_improved.py -u {credentials_username}:{credentials_password} -i training/gt_train.csv -c {solr_cluster_id} -x {name_of_collection} -r 30 -n {name_of_ranker} -d -v
+	```
+	
+1. This will result in a trainingdata.txt file that is used to train the ranker
 
-1. Copy the credentials, `CLUSTER_ID`, `COLLECTION_NAME` and `RANKER_ID` from your `retrieve-and-rank-service` service in Bluemix to `RetrieveAndRankResource.java`.  
-   You can use the following command to see the credentials:
+1. Take note of the <ranker_id>
 
-    ```sh
-    $ cf env <application-name>
-    ```
-
-   Example output:
-
-    ```sh
-    System-Provided:
-    {
-    "VCAP_SERVICES": {
-      "retrieve-and-rank": [{
-          "credentials": {
-            "url": "<url>",
-            "password": "<password>",
-            "username": "<username>"
-          },
-        "label": "retrieve-and-rank",
-        "name": "retrieve-and-rank-service",
-        "plan": "standard"
-     }]
-    }
-    }
-    User-Provided:
-    CLUSTER_ID: xxxxxxxx_ca0e_zzzz_zzzz_95zzz3aa2404
-    COLLECTION_NAME: ga
-    RANKER_ID: F131F6-rank-10
-    ```
-
-	You need to copy the `username`, `password`, and `url`,
-
-
-2. Create a Liberty profile server in Eclipse.
-
-3. Add the application to the server.
-
-4. Start the server.
-
-5. Go to `http://localhost:9080/webApp` to see the running application.
+1. Wait until the ranker becomes available. Use the following command to check status:
+	```sh
+	curl -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/rankerss/{ranker_id}"
+	```
+	
+1. Check that the ranker responds to questions:
+	```sh
+	curl -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters/{solr_cluster_id}/solr/{name_of_collection}/fcselect?ranker_id={ranker_id}?q=What%20are%20the%20symptoms%20of%20Appendicitis&wt=json&fl=id,topic,text_description"
+	```
+1. Validate results and compare with Solr
 
 
-## Troubleshooting
+## Running the demo application locally
 
-  To troubleshoot your Bluemix application, the most useful source of
-  information is the log files. To see them, run the following command:
+The application uses the WebSphere Liberty profile runtime as its server, so you need to download and install the profile as part of the steps below.
 
-  ```sh
-  $ cf logs <application-name> --recent
-  ```
+1. Copy the service credentials, `CLUSTER_ID`, `COLLECTION_NAME` and `RANKER_ID` from your `retrieve-and-rank-service` service in Bluemix to `RetrieveAndRankResource.java`.  
+ 
+1. Create a Liberty profile server in Eclipse.
+
+1. Run Mavin Install
+
+1. Add the application to the server.
+
+1. Start the server.
+
+1. Go to `http://localhost:9080/webApp` to see the running application.
 
 ## License
 
   This sample code is licensed under Apache 2.0.  
   Full license text is available in [LICENSE](LICENSE).
 
-## Contributing
-
-  See [CONTRIBUTING](CONTRIBUTING.md).
-
 
 ## Reference information
 * Retrieve and Rank service [documentation](http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/retrieve-rank/)
 * [Configuring](http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/retrieve-rank/configure.shtml) the Retrieve and Rank service
 * Retrieve and Rank [API reference](http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/retrieve-and-rank/api/v1/)
-
-## Open Source @ IBM
-
-  Find more open source projects on the
-  [IBM Github Page](http://ibm.github.io/).
 
 [sign_up]: https://console.ng.bluemix.net/registration/
 [cloud_foundry]: https://github.com/cloudfoundry/cli
