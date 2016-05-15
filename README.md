@@ -155,6 +155,7 @@ The application uses the WebSphere Liberty profile runtime as its server, so you
 
   This sample code is licensed under Apache 2.0.  
   Full license text is available in [LICENSE](LICENSE).
+  This sample uses [jquery](https://jquery.com/) which is MIT license
 
 
 ## Reference information
