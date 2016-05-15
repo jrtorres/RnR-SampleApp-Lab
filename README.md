@@ -1,6 +1,8 @@
 # Retrieve and Rank Demo
 The IBM Watson [Retrieve and Rank][service_url] service helps users find the most relevant information for their queries by using a combination of search and machine learning algorithms to detect "signals" in the data. You load your data into the service, which is built on top of Apache Solr, and train a machine learning model. Then use the trained model to provide improved results to users.
 
+Demo based on NIDDK data and the [following blog post](https://medium.com/machine-learning-with-ibm-watson/developing-with-ibm-watson-retrieve-and-rank-part-1-solr-configuration-29c18e52966f#.34kci5j99)
+
 ## Before you begin
 Ensure that you have the following prerequisites before you start:
 
