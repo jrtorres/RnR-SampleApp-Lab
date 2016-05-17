@@ -87,7 +87,7 @@ Ensure that you have the following prerequisites before you start:
 	
 1. Create the collection
 	```sh
-	curl -X POST -H "Content-Type: application/zip" -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters/{solr_cluster_id}/solr/admin/collections" -d "action=CREATE&name=ws_niddk_collection&collection.configName={name_of_config}&wt=json"
+	curl -X POST -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/solr_clusters/{solr_cluster_id}/solr/admin/collections" -d "action=CREATE&name=ws_niddk_collection&collection.configName={name_of_config}&wt=json"
 	```
 
 1. Gather the documents already prepared in the solrdocs.json file (in corpus directory)
