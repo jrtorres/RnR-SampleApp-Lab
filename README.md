@@ -125,7 +125,7 @@ Ensure that you have the following prerequisites before you start:
 
 1. Wait until the ranker becomes available. Use the following command to check status:
 	```sh
-	curl -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/rankerss/{ranker_id}"
+	curl -u "{credentials_username}":"{credentials_password}" "https://gateway.watsonplatform.net/retrieve-and-rank/api/v1/rankers/{ranker_id}"
 	```
 	
 1. Check that the ranker responds to questions:
